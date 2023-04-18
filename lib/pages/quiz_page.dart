@@ -1,133 +1,96 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/src/widgets/framework.dart';
-import 'package:flutter/src/widgets/placeholder.dart';
 import 'package:provider/provider.dart';
-import 'package:quiz_app/constants.dart';
 import 'package:quiz_app/providers/game_provider.dart';
+import 'package:quiz_app/utils/timer_box.dart';
+
+import '../utils/question_card.dart';
 
 class QuizPage extends StatelessWidget {
-  const QuizPage({super.key});
+  QuizPage({super.key});
 
   static const routeName = "quiz-page";
 
+  final PageController _controller = PageController();
+
+  void nextQuestion(BuildContext context) {
+    Provider.of<Game>(context, listen: false).isAnswered = false;
+    Provider.of<Game>(context, listen: false).nextQuestion();
+    _controller.nextPage(
+      duration: const Duration(seconds: 1),
+      curve: Curves.decelerate,
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
+    // Take the questions list from GameProvider and shuffle the list
+
     return Scaffold(
-      appBar: AppBar(),
-      body: PageView.builder(
-        itemCount: Provider.of<Game>(context).questions.length,
-        itemBuilder: (context, index) {
-          final questions =
-              Provider.of<Game>(context).shuffleQuestions()["questions"];
-          final questionData = questions[index];
-          return Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              QuestionCard(
-                questionData: questionData,
-              ),
-            ],
-          );
-        },
+      appBar: AppBar(
+        title: Consumer<Game>(
+            builder: (context, value, child) =>
+                Text("Soru : ${value.questionNumber}")),
       ),
-    );
-  }
-}
+      body: Stack(
+        children: [
+          TimerBox(),
+          PageView.builder(
+            controller: _controller,
+            itemCount: Game().questions["questions"].length,
+            itemBuilder: (context, index) {
+              //
+              // questionData contains question:"Question" , answers : [a,b,c,d]
+              return Stack(
+                children: [
+                  // Timer
 
-class QuestionCard extends StatelessWidget {
-  const QuestionCard({super.key, this.questionData});
-
-  final questionData;
-
-  @override
-  Widget build(BuildContext context) {
-    final _question = questionData["question"];
-    final _answers = questionData["answers"];
-
-    return Card(
-      color: Colors.grey,
-      child: Padding(
-        padding: const EdgeInsets.all(8.0),
-        child: SizedBox(
-          width: MediaQuery.of(context).size.width * 0.8,
-          // height: 700,
-
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              QuestionTitle(question: _question),
-              const Divider(),
-              AnswersSection(
-                answersData: _answers,
-                correctAnswer: questionData["answer"],
-              ),
-            ],
+                  Center(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        // The card which displays the question and answers.
+                        Consumer<Game>(builder: (context, value, child) {
+                          final List<Map> questions =
+                              Provider.of<Game>(context, listen: false)
+                                  .questions["questions"];
+                          final Map questionData = questions[index];
+                          return QuestionCard(
+                            questionData: questionData,
+                          );
+                        }),
+                      ],
+                    ),
+                  ),
+                  // Two buttons in a Row | Pass and Next
+                  Align(
+                    alignment: Alignment.bottomCenter,
+                    child: Padding(
+                      padding: const EdgeInsets.only(bottom: 10.0),
+                      child: ElevatedButton(
+                        onPressed: () => nextQuestion(context),
+                        child: const Text("Pas"),
+                      ),
+                    ),
+                  ),
+                  Consumer<Game>(builder: (context, value, child) {
+                    return Visibility(
+                      visible: value.isAnswered,
+                      child: Positioned(
+                        right: 15,
+                        bottom: 10,
+                        child: ElevatedButton(
+                          onPressed: () => nextQuestion(context),
+                          child: const Text("Sonraki"),
+                        ),
+                      ),
+                    );
+                  })
+                ],
+              );
+            },
           ),
-        ),
+        ],
       ),
-    );
-  }
-}
-
-class QuestionTitle extends StatelessWidget {
-  const QuestionTitle({super.key, required this.question});
-
-  final String question;
-  @override
-  Widget build(BuildContext context) {
-    return Text(
-      question,
-      style: Theme.of(context).textTheme.titleLarge,
-    );
-  }
-}
-
-class AnswersSection extends StatefulWidget {
-  const AnswersSection(
-      {super.key, required this.answersData, required this.correctAnswer});
-
-  final List answersData;
-  final String correctAnswer;
-  @override
-  State<AnswersSection> createState() => _AnswersSectionState();
-}
-
-class _AnswersSectionState extends State<AnswersSection> {
-  void onTap(String selectedAns) {
-    if (selectedAns.contains(widget.correctAnswer)) {
-      print("True");
-    }
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return ListView(
-      shrinkWrap: true,
-      children: [
-        ...widget.answersData.map(
-          (e) {
-            return Padding(
-              padding: const EdgeInsets.only(bottom: 8.0),
-              child: ListTile(
-                shape: const StadiumBorder(),
-                tileColor: AppColors.buttonColor,
-                leading: Text(
-                  e.keys
-                      .toString()
-                      .toUpperCase()
-                      .replaceAll("(", "")
-                      .replaceAll(")", ""),
-                ),
-                title: Text(
-                  e.values.toString().replaceAll("(", "").replaceAll(")", ""),
-                ),
-                onTap: () => onTap(e.keys.toString()),
-              ),
-            );
-          },
-        )
-      ],
     );
   }
 }

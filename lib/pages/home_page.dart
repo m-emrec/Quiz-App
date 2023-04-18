@@ -23,6 +23,7 @@ class HomePage extends StatelessWidget {
       ),
       body: Stack(
         children: [
+          // Background Image
           SizedBox(
             height: double.infinity,
             child: Image.network(
@@ -30,6 +31,7 @@ class HomePage extends StatelessWidget {
               fit: BoxFit.cover,
             ),
           ),
+          // Menu Card
           Center(
             child: SizedBox(
               width: MediaQuery.of(context).size.width * 0.7,
@@ -39,16 +41,20 @@ class HomePage extends StatelessWidget {
                   child: Column(
                     mainAxisSize: MainAxisSize.min,
                     children: [
+                      // Menu title
                       const CTitle(title: "Menu"),
+                      // Start game button
                       CButton(
                         label: "Start",
                         onTap: () => 
                           Navigator.of(context).pushNamed(QuizPage.routeName)
                         ,
                       ),
+                      // Just for some spacing
                       const SizedBox(
                         height: 25,
                       ),
+                      // Settings button
                       CButton(label: "Settings", onTap: () {})
                     ],
                   ),

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:quiz_app/constants.dart';
+import 'package:quiz_app/pages/end_screen.dart';
 import 'package:quiz_app/pages/home_page.dart';
 import 'package:quiz_app/pages/quiz_page.dart';
 import 'package:quiz_app/providers/game_provider.dart';
@@ -21,13 +22,16 @@ class MyApp extends StatelessWidget {
         debugShowCheckedModeBanner: false,
         title: 'Flutter Demo',
         theme: ThemeData(
-            primaryColor: AppColors.primaryColor,
-            appBarTheme: AppBarTheme(color: AppColors.primaryColor),
-            cardColor: AppColors.cardColor,
-            textTheme: const TextTheme(titleLarge: TextStyles.title)),
+          primaryColor: AppColors.primaryColor,
+          appBarTheme: AppBarTheme(color: AppColors.primaryColor),
+          cardColor: AppColors.cardColor,
+          textTheme: const TextTheme(titleLarge: TextStyles.title),
+          canvasColor: AppColors.canvasColor,
+        ),
         routes: {
           "/": (context) => HomePage(),
           QuizPage.routeName: (context) => QuizPage(),
+          EndScreen.routeName: (context) => EndScreen(),
         },
       ),
     );
