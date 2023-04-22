@@ -1,18 +1,32 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/src/widgets/framework.dart';
-import 'package:flutter/src/widgets/placeholder.dart';
+import 'package:provider/provider.dart';
 import 'package:quiz_app/constants.dart';
 import 'package:quiz_app/pages/quiz_page.dart';
+import 'package:quiz_app/providers/game_provider.dart';
 import 'package:quiz_app/utils/custom_button.dart';
 import 'package:quiz_app/utils/custom_title.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
-class HomePage extends StatelessWidget {
+import '../utils/menu_card.dart';
+
+class HomePage extends StatefulWidget {
   const HomePage({super.key});
 
   static const routeName = "home-page";
 
   @override
+  State<HomePage> createState() => _HomePageState();
+}
+
+class _HomePageState extends State<HomePage> {
+  @override
+  void initState() {
+    super.initState();
+  }
+
+  @override
   Widget build(BuildContext context) {
+    Provider.of<Game>(context,listen: false).getDataFromPrefs();
     return Scaffold(
       appBar: AppBar(
         title: const Text(
@@ -32,35 +46,8 @@ class HomePage extends StatelessWidget {
             ),
           ),
           // Menu Card
-          Center(
-            child: SizedBox(
-              width: MediaQuery.of(context).size.width * 0.7,
-              child: Card(
-                child: Padding(
-                  padding: const EdgeInsets.all(12.0),
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      // Menu title
-                      const CTitle(title: "Menu"),
-                      // Start game button
-                      CButton(
-                        label: "Start",
-                        onTap: () => 
-                          Navigator.of(context).pushNamed(QuizPage.routeName)
-                        ,
-                      ),
-                      // Just for some spacing
-                      const SizedBox(
-                        height: 25,
-                      ),
-                      // Settings button
-                      CButton(label: "Settings", onTap: () {})
-                    ],
-                  ),
-                ),
-              ),
-            ),
+          const Center(
+            child: MenuCard(),
           )
         ],
       ),

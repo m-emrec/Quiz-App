@@ -1,7 +1,9 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:quiz_app/constants.dart';
 import 'package:quiz_app/pages/end_screen.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class Game extends ChangeNotifier {
   //* variables
@@ -182,14 +184,13 @@ class Game extends ChangeNotifier {
   };
 
   int _score = 0;
-
+   int _lastScore = 0;
   // total duration of the game. If this reached to zero the game ends.
- final Duration _gameDuration = const Duration(seconds: 10);
+  late Duration _gameDuration;
 
   bool isAnswered = false;
 
   int _questionNumber = 1;
-  late int _time =0 ;
   late PageController controller;
 
   //* end of varibales
@@ -199,37 +200,61 @@ class Game extends ChangeNotifier {
   Map get questions => _questions;
   int get questionNumber => _questionNumber;
   int get score => _score;
-  int get time => _time;
   Duration get gameDuration => _gameDuration;
+  int get lastScore =>  _lastScore;
 
   //* end of getters
 
   //* Functions
 
+  void getDataFromPrefs (){
+    getGameDurationFromSettings();
+    getLastScore();
+
+  }
+
+  // Shared Preferences
+  // This function gets gameDuration from local storage and sets the _gameDuration. if gameDuration is null then _gameDuration will be 60 by default.
+  Future<void> getGameDurationFromSettings() async {
+    logger.i(" game duration has been set ");
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    _gameDuration = Duration(seconds: prefs.getInt("gameDuration") ?? 60);
+  }
+
+  // This function gets last score from local storage and sets the _lastScore. if last score is null then _lastScore will be 0 by default.
+  Future<void> getLastScore() async {
+    
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+
+    _lastScore =   prefs.getInt("lastScore") ?? 0;
+    logger.i(_lastScore);
+  }
+
+  Future<void> setGameDuration(int newGameDuration) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    prefs.setInt("gameDuration", newGameDuration);
+  }
+
+  Future<void> setLastScore(int newScore) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+
+    if (newScore > _lastScore) {
+      prefs.setInt("lastScore", newScore);
+    }
+  }
+
+  // end of Shared Preferences
+
   void increaseScore() {
-    print("increased");
+    logger.i("Increased");
     _score += 10;
     notifyListeners();
   }
 
-  void startTimer(BuildContext ctx,DateTime startTime) {
-    Timer.periodic(
-      const Duration(seconds: 1),
-      (timer) {
-        final DateTime now = DateTime.now();
-        // print(now.difference(startTime));
-        final int difference = now.difference(startTime).inSeconds;
-        
-        if (difference == _gameDuration.inSeconds) {
-          print("Times Up Mother Fucker");
-          timer.cancel();
-          Navigator.of(ctx).pushReplacementNamed(EndScreen.routeName);
-        }
-        _time = _gameDuration.inSeconds - difference;
-      //  print(timer.tick);
-        notifyListeners();
-      },
-    );
+  void resetGame() {
+    _questionNumber = 1;
+    _score = 0;
+    notifyListeners();
   }
 
   Map shuffleQuestions() {

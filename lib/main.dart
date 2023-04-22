@@ -1,3 +1,4 @@
+
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:quiz_app/constants.dart';
@@ -23,15 +24,15 @@ class MyApp extends StatelessWidget {
         title: 'Flutter Demo',
         theme: ThemeData(
           primaryColor: AppColors.primaryColor,
-          appBarTheme: AppBarTheme(color: AppColors.primaryColor),
+          appBarTheme: const AppBarTheme(color: AppColors.primaryColor),
           cardColor: AppColors.cardColor,
           textTheme: const TextTheme(titleLarge: TextStyles.title),
           canvasColor: AppColors.canvasColor,
         ),
         routes: {
-          "/": (context) => HomePage(),
+          "/": (context) => const HomePage(),
           QuizPage.routeName: (context) => QuizPage(),
-          EndScreen.routeName: (context) => EndScreen(),
+          EndScreen.routeName: (context) => const EndScreen(),
         },
       ),
     );

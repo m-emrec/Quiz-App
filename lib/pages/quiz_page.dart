@@ -23,8 +23,6 @@ class QuizPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // Take the questions list from GameProvider and shuffle the list
-
     return Scaffold(
       appBar: AppBar(
         title: Consumer<Game>(
@@ -33,35 +31,35 @@ class QuizPage extends StatelessWidget {
       ),
       body: Stack(
         children: [
-          TimerBox(),
+          // Timer
+          const TimerBox(),
           PageView.builder(
             controller: _controller,
             itemCount: Game().questions["questions"].length,
             itemBuilder: (context, index) {
-              //
               // questionData contains question:"Question" , answers : [a,b,c,d]
               return Stack(
                 children: [
-                  // Timer
-
                   Center(
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         // The card which displays the question and answers.
-                        Consumer<Game>(builder: (context, value, child) {
-                          final List<Map> questions =
-                              Provider.of<Game>(context, listen: false)
-                                  .questions["questions"];
-                          final Map questionData = questions[index];
-                          return QuestionCard(
-                            questionData: questionData,
-                          );
-                        }),
+                        Consumer<Game>(
+                          builder: (context, value, child) {
+                            final List<Map> questions =
+                                Provider.of<Game>(context, listen: false)
+                                    .questions["questions"];
+                            final Map questionData = questions[index];
+                            return QuestionCard(
+                              questionData: questionData,
+                            );
+                          },
+                        ),
                       ],
                     ),
                   ),
-                  // Two buttons in a Row | Pass and Next
+                  // Pass button
                   Align(
                     alignment: Alignment.bottomCenter,
                     child: Padding(
@@ -72,6 +70,7 @@ class QuizPage extends StatelessWidget {
                       ),
                     ),
                   ),
+                  // Next question button. it will be visible if the isAnswered is true.
                   Consumer<Game>(builder: (context, value, child) {
                     return Visibility(
                       visible: value.isAnswered,
