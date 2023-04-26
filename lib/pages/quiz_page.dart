@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:quiz_app/constants.dart';
 import 'package:quiz_app/providers/game_provider.dart';
 import 'package:quiz_app/utils/timer_box.dart';
 
 import '../utils/question_card.dart';
+import 'end_screen.dart';
 
 class QuizPage extends StatelessWidget {
   QuizPage({super.key});
@@ -13,12 +15,19 @@ class QuizPage extends StatelessWidget {
   final PageController _controller = PageController();
 
   void nextQuestion(BuildContext context) {
-    Provider.of<Game>(context, listen: false).isAnswered = false;
-    Provider.of<Game>(context, listen: false).nextQuestion();
-    _controller.nextPage(
-      duration: const Duration(milliseconds: 250),
-      curve: Curves.decelerate,
-    );
+    if (_controller.page! + 1 <
+        Provider.of<Game>(context, listen: false)
+            .questions["questions"]
+            .length) {
+      Provider.of<Game>(context, listen: false).isAnswered = false;
+      Provider.of<Game>(context, listen: false).nextQuestion();
+      _controller.nextPage(
+        duration: const Duration(milliseconds: 250),
+        curve: Curves.decelerate,
+      );
+    } else {
+      Navigator.of(context).pushReplacementNamed(EndScreen.routeName);
+    }
   }
 
   @override
@@ -26,8 +35,10 @@ class QuizPage extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: Consumer<Game>(
-          builder: (context, value, child) =>
-              Text("Soru : ${value.questionNumber}",style: const TextStyle(color: Colors.black),),
+          builder: (context, value, child) => Text(
+            "Soru : ${value.questionNumber}",
+            style: const TextStyle(color: Colors.black),
+          ),
         ),
       ),
       body: Stack(
