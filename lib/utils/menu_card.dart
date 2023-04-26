@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:quiz_app/utils/setting.dart';
+import 'package:quiz_app/constants.dart';
+import 'package:quiz_app/utils/setting_card.dart';
 
 import '../pages/quiz_page.dart';
 import '../providers/game_provider.dart';
@@ -14,10 +15,25 @@ class MenuCard extends StatelessWidget {
 
   void showSettingsDialogBox(BuildContext ctx) {
     showModalBottomSheet(
+      useSafeArea: true,
       backgroundColor: Colors.transparent,
       barrierColor: Colors.grey.withOpacity(0.7),
       context: ctx,
-      builder: (_) => const SettingsPopUp(),
+      builder: (_) =>
+          StatefulBuilder(builder: (BuildContext ctx, StateSetter setState) {
+        final double keyboardHeight = MediaQuery.of(ctx).viewInsets.bottom;
+        return Padding(
+          padding: keyboardHeight > 0
+              ? EdgeInsets.only(bottom: keyboardHeight)
+              : const EdgeInsets.only(bottom: 0),
+          child: SingleChildScrollView(
+            child: SizedBox(
+              height: MediaQuery.of(ctx).size.height * 0.5,
+              child: SettingsPopUp(),
+            ),
+          ),
+        );
+      }),
     );
   }
 

@@ -2,10 +2,17 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:quiz_app/constants.dart';
-import 'package:quiz_app/pages/end_screen.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class Game extends ChangeNotifier {
+  late PageController controller;
+  bool isAnswered = false;
+
+  // total duration of the game. If this reached to zero the game ends.
+  late Duration _gameDuration;
+
+   int _lastScore = 0;
+  int _questionNumber = 1;
   //* variables
   final Map _questions = {
     "questions": [
@@ -184,23 +191,19 @@ class Game extends ChangeNotifier {
   };
 
   int _score = 0;
-   int _lastScore = 0;
-  // total duration of the game. If this reached to zero the game ends.
-  late Duration _gameDuration;
-
-  bool isAnswered = false;
-
-  int _questionNumber = 1;
-  late PageController controller;
 
   //* end of varibales
 
   //* getters
 
   Map get questions => _questions;
+
   int get questionNumber => _questionNumber;
+
   int get score => _score;
+
   Duration get gameDuration => _gameDuration;
+
   int get lastScore =>  _lastScore;
 
   //* end of getters
@@ -221,6 +224,8 @@ class Game extends ChangeNotifier {
     _gameDuration = Duration(seconds: prefs.getInt("gameDuration") ?? 60);
   }
 
+
+
   // This function gets last score from local storage and sets the _lastScore. if last score is null then _lastScore will be 0 by default.
   Future<void> getLastScore() async {
     
@@ -230,7 +235,9 @@ class Game extends ChangeNotifier {
     logger.i(_lastScore);
   }
 
+  // sets the value of gameDuration.
   Future<void> setGameDuration(int newGameDuration) async {
+    _gameDuration = Duration(seconds: newGameDuration);
     SharedPreferences prefs = await SharedPreferences.getInstance();
     prefs.setInt("gameDuration", newGameDuration);
   }
@@ -239,7 +246,8 @@ class Game extends ChangeNotifier {
     SharedPreferences prefs = await SharedPreferences.getInstance();
 
     if (newScore > _lastScore) {
-      prefs.setInt("lastScore", newScore);
+      _lastScore = newScore;
+      prefs.setInt("lastScore", _lastScore);
     }
   }
 

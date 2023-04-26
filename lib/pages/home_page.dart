@@ -1,11 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:quiz_app/constants.dart';
-import 'package:quiz_app/pages/quiz_page.dart';
 import 'package:quiz_app/providers/game_provider.dart';
-import 'package:quiz_app/utils/custom_button.dart';
-import 'package:quiz_app/utils/custom_title.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 import '../utils/menu_card.dart';
 
@@ -26,7 +22,7 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
-    Provider.of<Game>(context,listen: false).getDataFromPrefs();
+    Provider.of<Game>(context,listen: true).getDataFromPrefs();
     return Scaffold(
       appBar: AppBar(
         title: const Text(

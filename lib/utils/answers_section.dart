@@ -12,11 +12,19 @@ class AnswersSection extends StatefulWidget {
 
   // the list contains Map of Answers
   final List<Map> answersData;
+
   @override
   State<AnswersSection> createState() => _AnswersSectionState();
 }
 
 class _AnswersSectionState extends State<AnswersSection> {
+  @override
+  void initState() {
+    super.initState();
+    // when this widget launched set the value of isAnswered to false.
+    Provider.of<Game>(context, listen: false).isAnswered = false;
+  }
+
   // This function takes the selceted answer and if the selected answer contains the correct answer it will increase the score.
   void onTap(Map selectedAns) {
     // if an answer selected change the valu of isAnswered to true. This way I can change the color of answer buttons and prevent changing the answer
@@ -27,13 +35,6 @@ class _AnswersSectionState extends State<AnswersSection> {
     if (selectedAns["isAnswer"] == true) {
       Provider.of<Game>(context, listen: false).increaseScore();
     }
-  }
-
-  @override
-  void initState() {
-    super.initState();
-    // when this widget launched set the value of isAnswered to false.
-    Provider.of<Game>(context, listen: false).isAnswered = false;
   }
 
   @override

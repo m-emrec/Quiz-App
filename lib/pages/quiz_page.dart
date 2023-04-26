@@ -16,7 +16,7 @@ class QuizPage extends StatelessWidget {
     Provider.of<Game>(context, listen: false).isAnswered = false;
     Provider.of<Game>(context, listen: false).nextQuestion();
     _controller.nextPage(
-      duration: const Duration(seconds: 1),
+      duration: const Duration(milliseconds: 250),
       curve: Curves.decelerate,
     );
   }
@@ -26,14 +26,16 @@ class QuizPage extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: Consumer<Game>(
-            builder: (context, value, child) =>
-                Text("Soru : ${value.questionNumber}")),
+          builder: (context, value, child) =>
+              Text("Soru : ${value.questionNumber}",style: const TextStyle(color: Colors.black),),
+        ),
       ),
       body: Stack(
         children: [
           // Timer
           const TimerBox(),
           PageView.builder(
+            physics: const NeverScrollableScrollPhysics(),
             controller: _controller,
             itemCount: Game().questions["questions"].length,
             itemBuilder: (context, index) {

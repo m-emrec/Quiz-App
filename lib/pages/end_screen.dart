@@ -17,7 +17,6 @@ class EndScreen extends StatefulWidget {
 class _EndScreenState extends State<EndScreen> {
   late int lastScore;
 
-
   @override
   Future<void> didChangeDependencies() async {
     super.didChangeDependencies();

@@ -1,5 +1,5 @@
-
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:quiz_app/constants.dart';
 import 'package:quiz_app/pages/end_screen.dart';
@@ -8,6 +8,11 @@ import 'package:quiz_app/pages/quiz_page.dart';
 import 'package:quiz_app/providers/game_provider.dart';
 
 void main() {
+  SystemChrome.setSystemUIOverlayStyle(
+    const SystemUiOverlayStyle(
+      systemNavigationBarColor: Colors.transparent,
+    ),
+  );
   runApp(const MyApp());
 }
 
